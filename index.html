@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>San Jose 景點小遊戲</title>
+    <style>
+        body {
+          background:  #6695be; /* 淡藍色 */
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          text-align: center;
+          padding: 40px;
+          color: #333;
+        }
+    
+        h1 {
+          font-size: 36px;
+          margin-bottom: 30px;
+          color: #fff;
+          text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+    
+        .game-container {
+          background: #fff;
+          padding: 30px;
+          border-radius: 15px;
+          box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+          display: inline-block;
+          max-width: 500px;
+          width: 90%;
+        }
+    
+        #question-text {
+          font-size: 20px;
+          margin-bottom: 20px;
+          font-weight: bold;
+        }
+    
+        img {
+          display: block;             /* ✅ 讓 margin auto 有效 */
+          margin: 20px auto;          /* ✅ 上下 20px，左右置中 */
+          width: 90%;
+          max-width: 400px;
+          border-radius: 10px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+          animation: fadeIn 1s ease;
+        }
+        
+    
+        #options {
+          display: flex;
+          flex-wrap: wrap;         /* 讓按鈕自動換行 */
+          justify-content: center; /* 水平置中 */
+          gap: 10px;               /* 按鈕之間的間距 */
+          margin-top: 20px;
+        }
+    
+        button {
+          background: #4CAF50;
+          border: none;
+          color: white;
+          padding: 12px 20px;
+          border-radius: 8px;
+          font-size: 16px;
+          cursor: pointer;
+          transition: background 0.3s ease, transform 0.2s ease;
+          min-width: 200px;         /* 最小寬度固定 */
+          flex: 1 1 calc(50% - 20px); /* 讓兩個按鈕一行排（自適應）*/
+          box-sizing: border-box;
+        }
+    
+        button:hover {
+          background: #45a049;
+          transform: scale(1.05);
+        }
+    
+        #result {
+          font-size: 24px;
+          margin-top: 30px;
+          color: #fff;
+          text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+    
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+
+<body>
+
+  <h1>🎯 San Jose 景點小遊戲</h1>
+
+  <div class="game-container" id="game">
+    <div id="question-text"></div>
+    <img id="question-image" src="" alt="" style="display: none;">
+    <div id="options"></div>
+  </div>
+
+  <div id="result"></div>
+
+  <script>
+    const questions = [
+    {
+      text: "這個城市擁有 NVIDIA 和 Adobe 這兩間科技公司，是美國科技創新的重要據點，請問這是哪裡？",
+      img: "static/imager/images.png",  // ← 把這張圖片放進 static 資料夾
+      options: [
+        "Los Angeles",
+        "San Francisco",
+        "San Jose",
+        "Seattle"
+      ],
+      answer: 2  // 正確答案是 San Jose
+    },   
+      {
+        text: "這是一棟有很多神秘樓梯和門的宅邸，用來躲避鬼魂。",
+        img: "/static/imager/02.jpg",
+        options: ["Municipal Rose Garden", "Winchester Mystery House", "Santana Row", "Emma Prusch Farm Park"],
+        answer: 1
+      },
+      {
+        text: "這裡有超過3500株玫瑰花，春天時最美麗。",
+        img: "static/imager/Rose Garden.webp",
+        options: ["Emma Prusch Farm Park", "Santana Row", "Municipal Rose Garden", "Children's Discovery Museum"],
+        answer: 2
+      },
+        {
+          text: "這家位於聖荷西的越南餐廳以牛肉河粉與蝦子春捲聞名，請問是哪一家？",
+          img: "static/imager/image (4).png",  // ⬅ 替換成你的檔名
+          options: [
+            "Pho Kim Long",
+            "Pho Hoa",
+            "Com Tam Thien Huong",
+            "Vietnam Town Deli"
+            ],
+            answer: 0
+      },
+      {
+        text: "這是一個適合全家一起遊玩的地方，有動物園、遊樂設施和自然空間。",
+        img: "static/imager/image2.png",  // ⬅ 替換成你的檔名
+        options: [
+          "Winchester Mystery House",
+          "Santana Row",
+          "Happy Hollow Park & Zoo",
+          "Emma Prusch Farm Park"
+        ],
+        answer: 2  // 正確答案是第 3 個（從 0 開始算）
+      }
+      
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    function showQuestion() {
+      const q = questions[currentQuestion];
+      document.getElementById('question-text').innerText = q.text;
+      document.getElementById('question-image').src = q.img;
+      document.getElementById('question-image').style.display = 'block';
+      const optionsDiv = document.getElementById('options');
+      optionsDiv.innerHTML = '';
+      q.options.forEach((option, index) => {
+        const button = document.createElement('button');
+        button.innerText = option;
+        button.onclick = () => checkAnswer(index);
+        optionsDiv.appendChild(button);
+      });
+    }
+
+    function checkAnswer(selected) {
+      if (selected === questions[currentQuestion].answer) {
+        alert("✅ 正確！");
+        currentQuestion++;
+        if (currentQuestion < questions.length) {
+          showQuestion();
+        } else {
+          document.getElementById('game').style.display = 'none';
+          document.getElementById('result').innerText = `🎉 遊戲結束！！`;
+        }
+      } else {
+        alert("❌ 錯誤！請再試一次！");
+      }
+    }
+    
+    showQuestion();
+  </script>
+
+</body>
+</html>
